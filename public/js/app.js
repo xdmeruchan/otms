@@ -179,13 +179,23 @@ document.addEventListener('submit', async (e) => {
   e.preventDefault();
   const f = e.target, v = Object.fromEntries(new FormData(f)), err = $('#err'), btn = f.querySelector('button.p, button:not([type])');
   err.style.color = '';
-  if (f.id === 'lf') {
-    btn.disabled = true;
+if (f.id === 'lf') {
+  btn.disabled = true; err.textContent = 'Signing in…';
+  try {
     const r = await sb.auth.signInWithPassword({ email: `${v.id.trim()}@${CONFIG.EMAIL_DOMAIN}`.toLowerCase(), password: v.pw });
+    if (r.error) {
+      err.textContent = r.error.status === 400
+        ? 'Employee ID or password is incorrect.'
+        : 'Cannot reach the server: ' + r.error.message;
+      return;
+    }
+    await boot();
+  } catch (x) {
+    err.textContent = 'Sign-in failed: ' + x.message;
+  } finally {
     btn.disabled = false;
-    if (r.error) { err.textContent = 'Employee ID or password is incorrect.'; return; }
-    boot();
-  } else if (f.id === 'f') {
+  }
+} else if (f.id === 'f') {
     const h = hrsOf(v.s, v.e); let m = '';
     if (!v.date || v.date > ld(new Date())) m = 'Choose a date that is today or earlier.';
     else if (h <= 0 || h > 12) m = 'Overtime must be between 0 and 12 hours.';
