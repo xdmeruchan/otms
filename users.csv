@@ -1,0 +1,4 @@
+employee_id,full_name,office,role,supervisor_employee_id,monthly_salary
+30000000,Juan A. Dela Cruz,Admin Services,admin,,60000
+30000010,Maria B. Santos,Planning Unit,supervisor,,45000
+30000100,Jose C. Reyes,Planning Unit,user,30000010,28000
